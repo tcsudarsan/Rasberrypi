@@ -1,0 +1,102 @@
+Rasberry02(01-22) 
+
+Project Aim: In this project, Grafana visulaisation tool is installed on a Rasberry pi.
+
+Project source : https://grafana.com/tutorials/install-grafana-on-raspberry-pi/
+
+Key words:
+    Grafana: Grafana is a Open source visualisation and monitoring tool. Grafana enables the end-d
+    users to query the data from a data source, normally databases. Along with visulaisation of the queried metrices, grafana allows to Monitor and provide alerts on metrices. These alerts are defined by Users in their alert rule.
+    Further information regarding the Grafana platform is available in their official website at https://grafana.com/docs/grafana/latest/introduction/.
+
+    Rasberry Pi: The Raspberry Pi is a tiny and affordable computer that you can use to learn programming through fun, practical projects. Further information about Rasberry pi can be found on their official website at https://www.raspberrypi.org/
+
+Hardware Used:
+    Rasberry pi - 3 Model B V 1.2
+    SD card - sand disk 32 GB
+
+25-01-2022:
+    
+    Problem: Could not connect Rasberry Pi to my Wi-Fi because the wpa_suppilcant.conf file is incomplete in grafana tutorials.
+
+    Solution: Searched for wpa_supplicant.conf details for USA and Germany and used Germany wpa_supplicant.conf with my Network details
+
+    Check the IP of Rasberry Pi:
+        1) Using Fing, Fing is a mobile application, available in Android and IoS OS. After installing Fing, we can look in to the devices along with their IP names and IP addressess.
+        2) Using Nmap, nmap is free and open source Network scanner for network discovery and scanning. In windows install nmap self installer, available at https://nmap.org/download.html. After installing successfully in your OS, then enter command prompt and search for nmap in command prompt. In Command prompt opened earlier the nmap installation, Nmap wil not show ip.
+        Scan the devices connected to network using nmap sn (your network IP excluding the last section)xxx.xxx.x.0/24. This will allow the namp to scan on all the devices connected your network and Wifi will allow a maximum of 255 devices.
+
+    Login to Rasberry pi:
+
+        Locate the IP of rasberrypi from section "Check the IP of Rasberry Pi". then use the following command to login to Rasberrypi
+            ssh username@RasberryIP
+                default username = pi
+            After entering the above command, if the SSH key verification is successfully done, then the command prompt request password to login to pi
+                default password = raspberry
+
+                Problem:
+                If the SSH key was failed, and initial handshake between Rasberry Pi and PC is rejected due to a mismatch of verification key.  
+                                    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                    @    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+                    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                    IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+                    Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+                    It is also possible that a host key has just been changed.
+                    The fingerprint for the ECDSA key sent by the remote host is
+                    SHA256:gPxH3Uq99XMEyIK5NA7r5khKZfSEUqTRmA+01qBAtJc.
+                    Please contact your system administrator.
+                    Add correct host key in C:\\Users\\ChaitanyaTholeti/.ssh/known_hosts to get rid of this message.
+                    Offending ECDSA key in C:\\Users\\ChaitanyaTholeti/.ssh/known_hosts:21
+                    ECDSA host key for 192.168.0.31 has changed and you have requested strict checking.
+                    Host key verification failed.
+
+                Solution:
+                Navigate to the .ssh folder on your PC and open known_hosts. In Known_hosts, search for the entry on Rasberry Pi IP, delete the ssh key information row and save the file. Now try to Login to Rasberry Pi and there would not be any issues with SSH key. 
+
+    Install Grafana on a Rasberry Pi:
+
+        After Logging in to Rasberry pi, execute follwing commands
+            cmd 1: wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+                Description: using wget, we are collecting the keys for the authentication of grafana packages. Using apt-key add -, we are adding the collected key to Rasberry pi for authentication of Grafana packages
+
+                    add-apt-repository is a Python script that allows you to add an APT repository to either /etc/apt/sources.list or to a separate file in the /etc/apt/sources.list.d directory. The command can also be used to remove an already existing repository.
+
+                    If the add-apt-repository is not available on your system you will get an error message saying “add-apt-repository command not found”.
+            
+
+            cmd 2: echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+
+                    Using this command we are adding the Grafana APT repository, using the added APT key earlier, the Grana APT repository is authenticated.
+
+            cmd 3: sudo apt-get update
+
+                    Used to update the packages that are installed and update with new packages added to repositry
+
+            cmd 4: sudo apt-get install -y grafana
+
+                    Used to install grafana using apt-get
+
+            cmd 5: sudo /bin/systemctl enable grafana-server
+
+                    After installation of Grafana server on Rasberrypi, Grafana needs to be enabled and started. The above command enables the Grafana server installed on Rasberry pi
+
+                    systemctl is used to examine and control the state of “systemd” system and service manager. Grafana is a service on Rasberry pi, we use systemctl to enable and start the grafana service.
+
+            cmd 6: sudo /bin/systemctl start grafana-server
+                    
+                    After Enabling, start the Grafana server using the above command.
+
+
+    How to verify whether Grafana is running on rasberry pi?
+
+            Open your webbrowser and search for http://ip address:3000
+            The webpage navigates you to the Grafana login page
+            Default user credentials to login Grafana are
+                username:admin
+                password:admin
+            Grafana console prompts the user to change the password after login.
+
+Conclusion:
+    Grafana, opensource monitoring platform is successfully installed on a Headless Rasberry pi.   
+
+    Command to stop Grafana service on Rasberry pi = sudo /bin/systemctl stop grafana-server
